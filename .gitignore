@@ -1,0 +1,5 @@
+venv/
+*.7z
+splitted/
+*.mp4
+ProgramToSend
