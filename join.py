@@ -12,12 +12,12 @@ import os, sys
 readsize = 1024
 
 def join(fromdir, tofile):
-    output = open(tofile, 'wb')
+    output = open(tofile, 'w')
     parts  = os.listdir(fromdir)
     parts.sort(  )
     for filename in parts:
         filepath = os.path.join(fromdir, filename)
-        fileobj  = open(filepath, 'rb')
+        fileobj  = open(filepath, 'r')
         while 1:
             filebytes = fileobj.read(readsize)
             if not filebytes: break

@@ -12,7 +12,7 @@ import sys, os
 
 kilobytes = 1024
 megabytes = kilobytes * 1000
-chunksize = int(1024)  # default: roughly a floppy
+chunksize = int(400)  # default: roughly a floppy
 
 
 def split(fromfile, todir, chunksize=chunksize):
@@ -22,13 +22,13 @@ def split(fromfile, todir, chunksize=chunksize):
         for fname in os.listdir(todir):  # delete any existing files
             os.remove(os.path.join(todir, fname))
     partnum = 0
-    input = open(fromfile, 'rb')  # use binary mode on Windows
+    input = open(fromfile, 'r')  # use binary mode on Windows
     while 1:  # eof=empty string from read
         chunk = input.read(chunksize)  # get next part <= chunksize
         if not chunk: break
         partnum = partnum + 1
         filename = os.path.join(todir, ('part%04d' % partnum))
-        fileobj = open(filename, 'wb')
+        fileobj = open(filename, 'w')
         fileobj.write(chunk)
         fileobj.close()  # or simply open(  ).write(  )
     input.close()

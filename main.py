@@ -1,51 +1,64 @@
-# CHUNK_SIZE = 5
+import glob
 import os
-# file_number = 1
-filename = 'main.7z'
-# if not os.path.exists(filename+"1"):
-#     os.mkdir(filename+"1")
-# with open(filename) as f:
-#     chunk = f.read(CHUNK_SIZE)
-#     while chunk:
-#         with open('my_song_part_' + str(file_number)) as chunk_file:
-#             chunk_file.write(chunk)
-#         file_number += 1
-#         chunk = f.read(CHUNK_SIZE)
-import sys
+import codecs
+import split
+file = "output.json"
+dir_path = r'ProgramToSend'
+# list to store files name
 
-################################3
-# from pip._vendor.msgpack.fallback import xrange
-#
-# filePath = 'main.7z'
-# yuv_string_bytes = bytes(open(filePath, 'rb').read())
-#
-# file_uv = open("uv_buffer", "wb+")
-# file_y = open("y_buffer", "wb+")
-# for i in xrange(0, len(yuv_string_bytes), 2):
-#     uv = bytes(yuv_string_bytes[i])
-#     y = bytes(yuv_string_bytes[i+1])
-#     file_uv.write(uv)
-#     file_y.write(y)
-#
-# file_y.close()
-# file_uv.close()
+def insert_dash(string, index):
+    return string[:index] + r"\\" + string[index+1:]
+def find_all_loc(vars, key):
+    pos = []
+    start = 0
+    end = len(vars)
+    while True:
+        loc = vars.find(key, start, end)
+        if loc == -1:
+            break
+        else:
+            pos.append(loc)
+            start = loc + len(key)
+    return pos
+# creating Json Object with direcoriesdef create_tree_of_files(dir_path):
+def create_tree_of_files(dir_path):
+    Array_lineswithfiles = []
+    Array_lineswithfiles.append("{")
+    for (dir_path, dir_names, file_names) in os.walk(dir_path):
+        pos = find_all_loc(dir_path, "\\")
+        num_pos = 0
+        for xpos in pos:
+            dir_path = insert_dash(dir_path,xpos+num_pos)
+            num_pos += 1
+        Array_lineswithfiles.append("\""+dir_path+"\":")
+        filelist = ''
+        if len(file_names) == 0:
+            filelist += "[]"
+        else:
+            filelist += '['
+            for x in file_names:
+                filelist += "\"" + str(x) + "\"" + ", "
+            filelist = filelist[:-2]
+            filelist += ']'
+        filelist += ", "
 
-# File to open and break apart
-fileR = open(filename, "rb")
-chunk = 0
-how_many_bytes = 1024
-byte = fileR.read(how_many_bytes)
-directory = filename+"dir"
-if not os.path.exists(directory):
-    os.mkdir(directory)
-while byte:
-    # Open a temporary file and write a chunk of bytes
-    fileN = str(directory)+"/chunk" + str(chunk) + ".f"
-    fileT = open(fileN, "wb")
-    fileT.write(byte)
-    fileT.close()
-    # Read next 1024 bytes
-    byte = fileR.read(how_many_bytes)
-    chunk += 1
-# join file
+        # filelist = filelist[:-2]
+        Array_lineswithfiles.append(str(filelist))
+    Array_lineswithfiles[len(Array_lineswithfiles) - 1] = Array_lineswithfiles[len(Array_lineswithfiles) - 1][:-2]
+    print()
+    Array_lineswithfiles.append("}")
+    return Array_lineswithfiles
 
+def write_file():
+
+    f = open(file, "w")
+    f.close()
+    f = codecs.open(file, "a", "utf-8")
+    for line in create_tree_of_files(dir_path):
+        f.write(line)
+    f.close()
+
+write_file()
+# os.system("split.py " + file + " splitted3 400")
+os.system("python split.py")
+#split json file and send
