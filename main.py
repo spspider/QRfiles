@@ -1,9 +1,18 @@
-import glob
-import os
 import codecs
-import split
+import os
+import sys
+
+import cv2
+import qrcode
+
+kilobytes = 1024
+megabytes = kilobytes * 1000
+chunksize = int(400)  # default: roughly a floppy
+
+# import split
 file = "output.json"
 dir_path = r'ProgramToSend'
+folder_to_split = "splitted4"
 # list to store files name
 
 def insert_dash(string, index):
@@ -58,7 +67,72 @@ def write_file():
         f.write(line)
     f.close()
 
-write_file()
+
 # os.system("split.py " + file + " splitted3 400")
-os.system("python split.py")
+
+def split(fromfile, todir, chunksize=chunksize):
+    if not os.path.exists(todir):  # caller handles errors
+        os.mkdir(todir)  # make dir, read/write parts
+    else:
+        for fname in os.listdir(todir):  # delete any existing files
+            os.remove(os.path.join(todir, fname))
+    partnum = 0
+    input = open(fromfile, 'rb')  # use binary mode on Windows
+    while 1:  # eof=empty string from read
+        chunk = input.read(chunksize)  # get next part <= chunksize
+        if not chunk: break
+        partnum = partnum + 1
+        filename = os.path.join(todir, ('part%04d' % partnum))
+        fileobj = open(filename, 'wb')
+        fileobj.write(chunk)
+        fileobj.close()  # or simply open(  ).write(  )
+    input.close()
+    assert partnum <= 9999  # join sort fails if 5 digits
+    return partnum
 #split json file and send
+write_file()
+split(file, folder_to_split, 400)
+# send
+#craatefilelist
+
+from os import listdir
+from os.path import isfile, join
+onlyfiles = [f for f in listdir(folder_to_split) if isfile(join(folder_to_split, f))]
+onlyfiles.sort()
+
+def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
+    dim = None
+    (h, w) = image.shape[:2]
+
+    if width is None and height is None:
+        return image
+    if width is None:
+        r = height / float(h)
+        dim = (int(w * r), height)
+    else:
+        r = width / float(w)
+        dim = (width, int(h * r))
+
+    return cv2.resize(image, dim, interpolation=inter)
+def showQRcode(each_file):
+    with open(folder_to_split + "\\" + each_file, mode='rb') as file: # b is important -> binary
+        fileContent = file.read()
+    img = qrcode.make(fileContent)
+    #show image
+    img.save('MyQRCode2.png')
+    img = cv2.imread('MyQRCode2.png', cv2.IMREAD_ANYCOLOR)
+    # imS = cv2.resize(img, (960, 540))
+    resize = ResizeWithAspectRatio(img, width=600)
+    cv2.imshow(each_file, resize)
+
+    cv2.waitKey()
+    cv2.destroyAllWindows()
+
+
+for each_file in onlyfiles:
+    # input("Press Enter to continue...")
+    showQRcode(each_file)
+sys.exit()
+# print(onlyfiles)
+# fileName = "splitted3/part0001"
+# # Data to encode
