@@ -7,4 +7,4 @@ with open(fileName, mode='r') as file: # b is important -> binary
 # print(fileContent)
 data = fileContent
 img = qrcode.make(fileContent)
-img.save('MyQRCode2.png')
+img.save('MyQRCode3.png')

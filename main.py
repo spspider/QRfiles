@@ -1,19 +1,20 @@
 import codecs
 import os
 import sys
-
-import cv2
 import qrcode
+import cv2
+
 
 kilobytes = 1024
 megabytes = kilobytes * 1000
-chunksize = int(400)  # default: roughly a floppy
+chunksize = int(50) #default: roughly a floppy
 
 # import split
 file = "output.json"
 dir_path = r'ProgramToSend'
 folder_to_split = "splitted4"
 # list to store files name
+#convert to utf-8
 
 def insert_dash(string, index):
     return string[:index] + r"\\" + string[index+1:]
@@ -62,11 +63,16 @@ def write_file():
 
     f = open(file, "w")
     f.close()
-    f = codecs.open(file, "a", "utf-8")
+    f = codecs.open("temp_file", "a", "windows-1251")
     for line in create_tree_of_files(dir_path):
         f.write(line)
     f.close()
-
+    #convert
+    with open("temp_file", 'r', encoding='windows-1251') as inp, \
+            open(file, 'w', encoding='utf-8') as outp:
+        for line in inp:
+            outp.write(line)
+    os.remove("temp_file")
 
 # os.system("split.py " + file + " splitted3 400")
 
@@ -77,13 +83,13 @@ def split(fromfile, todir, chunksize=chunksize):
         for fname in os.listdir(todir):  # delete any existing files
             os.remove(os.path.join(todir, fname))
     partnum = 0
-    input = open(fromfile, 'rb')  # use binary mode on Windows
+    input = open(fromfile, 'r', encoding='utf-8')  # use binary mode on Windows
     while 1:  # eof=empty string from read
         chunk = input.read(chunksize)  # get next part <= chunksize
         if not chunk: break
         partnum = partnum + 1
         filename = os.path.join(todir, ('part%04d' % partnum))
-        fileobj = open(filename, 'wb')
+        fileobj = open(filename, 'w', encoding='utf-8')
         fileobj.write(chunk)
         fileobj.close()  # or simply open(  ).write(  )
     input.close()
@@ -91,7 +97,7 @@ def split(fromfile, todir, chunksize=chunksize):
     return partnum
 #split json file and send
 write_file()
-split(file, folder_to_split, 400)
+split(file, folder_to_split, chunksize)
 # send
 #craatefilelist
 
@@ -124,7 +130,14 @@ def showQRcode(each_file):
     # imS = cv2.resize(img, (960, 540))
     resize = ResizeWithAspectRatio(img, width=600)
     cv2.imshow(each_file, resize)
-
+    #check if that file can be read
+    detector = cv2.QRCodeDetector()
+    data, bbox, straight_qrcode = detector.detectAndDecode(img)
+    if data:
+        print(data)
+    else:
+        print("wrong file")
+        sys.exit()
     cv2.waitKey()
     cv2.destroyAllWindows()
 
