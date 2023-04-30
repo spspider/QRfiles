@@ -30,6 +30,17 @@ def drawRectangle(imageRect):
     return cv2.rectangle(resize, (x1,y1), (x2, y2), (0, 0, 0), -1)
 sct = mss()
 imageRect = (1,1,1,1)
+
+
+from pyzbar.pyzbar import decode as qr_decode
+def readQR(image):
+    qr = qr_decode(image)
+    if qr:
+        data = qr[0].data
+        return data
+
+
+
 while True:
     sct_img = sct.grab(bounding_box)
 
@@ -43,8 +54,7 @@ while True:
     imageRect = cv2.getWindowImageRect(screenName)
     #
     # print(dim)
-    detector = cv2.QRCodeDetector()
-    data, bbox, straight_qrcode = detector.detectAndDecode(frame_array)
+    data = readQR(frame_array)
 
     if data:
         print(data)
