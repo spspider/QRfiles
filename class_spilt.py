@@ -13,27 +13,26 @@ import sys, os
 kilobytes = 1024
 megabytes = kilobytes * 1000
 chunksize = int(400)  # default: roughly a floppy
-
-
-def split(fromfile, todir, chunksize=chunksize):
-    if not os.path.exists(todir):  # caller handles errors
-        os.mkdir(todir)  # make dir, read/write parts
-    else:
-        for fname in os.listdir(todir):  # delete any existing files
-            os.remove(os.path.join(todir, fname))
-    partnum = 0
-    input = open(fromfile, 'r')  # use binary mode on Windows
-    while 1:  # eof=empty string from read
-        chunk = input.read(chunksize)  # get next part <= chunksize
-        if not chunk: break
-        partnum = partnum + 1
-        filename = os.path.join(todir, ('part%04d' % partnum))
-        fileobj = open(filename, 'w')
-        fileobj.write(chunk)
-        fileobj.close()  # or simply open(  ).write(  )
-    input.close()
-    assert partnum <= 9999  # join sort fails if 5 digits
-    return partnum
+class splitfile:
+    def split(fromfile, todir, chunksize=chunksize):
+        if not os.path.exists(todir):  # caller handles errors
+            os.mkdir(todir)  # make dir, read/write parts
+        else:
+            for fname in os.listdir(todir):  # delete any existing files
+                os.remove(os.path.join(todir, fname))
+        partnum = 0
+        input = open(fromfile, 'r', encoding='utf-8')  # use binary mode on Windows
+        while 1:  # eof=empty string from read
+            chunk = input.read(chunksize)  # get next part <= chunksize
+            if not chunk: break
+            partnum = partnum + 1
+            filename = os.path.join(todir, ('part%04d' % partnum))
+            fileobj = open(filename, 'w', encoding='utf-8')
+            fileobj.write(chunk)
+            fileobj.close()  # or simply open(  ).write(  )
+        input.close()
+        assert partnum <= 9999  # join sort fails if 5 digits
+        return partnum
 
 
 if __name__ == '__main__':
@@ -52,7 +51,7 @@ if __name__ == '__main__':
         print('Splitting', absfrom, 'to', absto, 'by', chunksize)
 
         try:
-            parts = split(fromfile, todir, chunksize)
+            parts = splitfile.split(fromfile, todir, chunksize)
         except:
             print('Error during split:')
             # print(sys.exc_type, sys.exc_value)

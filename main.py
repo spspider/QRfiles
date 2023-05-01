@@ -18,7 +18,6 @@ folder_to_split = "splitted4"
 
 from class_create_tree_of_files import tree_of_files
 def write_file():
-
     f = open(file, "w")
     f.close()
     f = codecs.open("temp_file", "a", "utf-8")
@@ -34,28 +33,11 @@ def write_file():
 
 # os.system("split.py " + file + " splitted3 400")
 
-def split(fromfile, todir, chunksize=chunksize):
-    if not os.path.exists(todir):  # caller handles errors
-        os.mkdir(todir)  # make dir, read/write parts
-    else:
-        for fname in os.listdir(todir):  # delete any existing files
-            os.remove(os.path.join(todir, fname))
-    partnum = 0
-    input = open(fromfile, 'r', encoding='utf-8')  # use binary mode on Windows
-    while 1:  # eof=empty string from read
-        chunk = input.read(chunksize)  # get next part <= chunksize
-        if not chunk: break
-        partnum = partnum + 1
-        filename = os.path.join(todir, ('part%04d' % partnum))
-        fileobj = open(filename, 'w', encoding='utf-8')
-        fileobj.write(chunk)
-        fileobj.close()  # or simply open(  ).write(  )
-    input.close()
-    assert partnum <= 9999  # join sort fails if 5 digits
-    return partnum
+
 #split json file and send
 write_file()
-split(file, folder_to_split, chunksize)
+from class_spilt import splitfile
+splitfile.split(file, folder_to_split, chunksize)
 # send
 #craatefilelist
 
