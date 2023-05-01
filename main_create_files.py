@@ -7,10 +7,12 @@ from os import listdir
 from os.path import isfile, join
 import json
 
+import class_write_file_and_decode
 from cv2_utils import cv2_utils
 from class_write_file_and_decode import write_file_and_deocde
 from class_create_tree_of_files import tree_of_files
 
+import numpy as np
 
 kilobytes = 1024
 megabytes = kilobytes * 1000
@@ -69,23 +71,15 @@ def showQRcode(each_file):
         fileContent = json.dumps(JsonHeader_json.__dict__) + str(file.read())
     img = qrcode.make(fileContent)
     #show image
+    frame_array = np.array(img)
+    ########################################
     img.save('MyQRCode2.png')
     img = cv2.imread('MyQRCode2.png', cv2.IMREAD_ANYCOLOR)
     # imS = cv2.resize(img, (960, 540))
     resize = cv2_utils.ResizeWithAspectRatio(img, width=600)
     cv2.imshow(each_file, resize)
-
-    ########################################3
-
     #check if that file can be read
-    from pyzbar.pyzbar import decode as qr_decode
-    def readQR(image):
-        qr = qr_decode(image)
-        if qr:
-            data = qr[0].data.decode("utf-8")
-            return data
-    scanned_data = readQR(img)
-    write_file_and_deocde.writefile(scanned_data)
+    write_file_and_deocde.decodeimag(img)
 
     cv2.waitKey()
     cv2.destroyAllWindows()
