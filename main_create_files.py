@@ -11,6 +11,7 @@ import class_write_file_and_decode
 from cv2_utils import cv2_utils
 from class_write_file_and_decode import write_file_and_deocde
 from class_create_tree_of_files import tree_of_files
+from class_shared_utilites import write_lines_to_files
 
 import numpy as np
 from class_spilt import splitfile
@@ -22,29 +23,17 @@ chunksize = int(2000) #default: roughly a floppy
 # import split
 file = "output.json"
 dir_path: str = r'ProgramToSend'
-folder_to_split = "splitted4"
+folder_to_split = "splitted3"
 # list to store files name
 #convert to utf-8
 
-def write_file(file,lines):
-    f = open(file, "w")
-    f.close()
-    f = codecs.open("temp_file", "a", "utf-8")
-    for line in lines:
-        f.write(line)
-    f.close()
-    #convert
-    with open("temp_file", 'r', encoding='utf-8') as inp, \
-            open(file, 'w', encoding='utf-8') as outp:
-        for line in inp:
-            outp.write(line)
-    os.remove("temp_file")
+
 
 # os.system("split.py " + file + " splitted3 400")
 
 
 #split json file and send
-write_file(file, tree_of_files.create_tree_of_files(dir_path))
+write_lines_to_files.write_file(file, tree_of_files.create_tree_of_files(dir_path))
 splitfile.split(file, folder_to_split, chunksize)
 # send
 #craatefilelist

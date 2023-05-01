@@ -2,7 +2,7 @@ import json
 from collections import namedtuple
 import re
 from pyzbar.pyzbar import decode as qr_decode
-
+from class_shared_utilites import write_lines_to_files
 
 def customStudentDecoder(studentDict):
     return namedtuple('X', studentDict.keys())(*studentDict.values())
@@ -28,6 +28,9 @@ def writefile(scanned_data):
     number_all_of_files = int(metadata_json.allfiles)
     print(number_of_file)
     print(number_all_of_files)
+    filename = "recieved/"+('part%04d' % number_of_file)
+    write_lines_to_files.write_file(filename, string_recieved)
+
 class write_file_and_deocde:
     def decodeimag(img):
         scanned_data = readQR(img)
