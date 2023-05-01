@@ -20,19 +20,22 @@ class splitfile:
         else:
             for fname in os.listdir(todir):  # delete any existing files
                 os.remove(os.path.join(todir, fname))
-        partnum = 0
-        input = open(fromfile, 'r', encoding='utf-8')  # use binary mode on Windows
-        while 1:  # eof=empty string from read
-            chunk = input.read(chunksize)  # get next part <= chunksize
-            if not chunk: break
-            partnum = partnum + 1
-            filename = os.path.join(todir, ('part%04d' % partnum))
-            fileobj = open(filename, 'w', encoding='utf-8')
-            fileobj.write(chunk)
-            fileobj.close()  # or simply open(  ).write(  )
-        input.close()
-        assert partnum <= 9999  # join sort fails if 5 digits
-        return partnum
+        try:
+            partnum = 0
+            input = open(fromfile, 'r', encoding='utf-8')  # use binary mode on Windows
+            while 1:  # eof=empty string from read
+                chunk = input.read(chunksize)  # get next part <= chunksize
+                if not chunk: break
+                partnum = partnum + 1
+                filename = os.path.join(todir, ('part%04d' % partnum))
+                fileobj = open(filename, 'w', encoding='utf-8')
+                fileobj.write(chunk)
+                fileobj.close()  # or simply open(  ).write(  )
+            input.close()
+            assert partnum <= 9999  # join sort fails if 5 digits
+            return partnum
+        except UnicodeDecodeError:
+            return
 
 
 if __name__ == '__main__':

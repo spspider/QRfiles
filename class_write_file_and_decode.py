@@ -9,7 +9,6 @@ from class_join import join
 def customStudentDecoder(studentDict):
     return namedtuple('X', studentDict.keys())(*studentDict.values())
 
-
 def decodePart_number(filename):
     match = re.search(r'\d+', filename)
     if match:
@@ -29,9 +28,6 @@ def writefile(scanned_data):
     number_of_file = decodePart_number(metadata_json.p)
     number_all_of_files = int(metadata_json.a)
     filename = metadata_json.f
-    print(number_of_file)
-    print(number_all_of_files)
-    print(filename)
     filename = "recieved/"+('part%04d' % number_of_file)
     write_lines_to_files.write_file(filename, string_recieved)
     if number_of_file == number_all_of_files:
