@@ -18,14 +18,18 @@ def readQR(image):
         data = qr[0].data.decode("utf-8")
         return data
 
+def writefile(scanned_data):
+    metadata_index = scanned_data.index("}b'", 0, 50) + 1
+    metadata_recieved = scanned_data[:metadata_index]
+    string_recieved = scanned_data[metadata_index + 2:len(scanned_data) - 1]
+    metadata_json = json.loads(metadata_recieved, object_hook=customStudentDecoder)
 
+    number_of_file = decodePart_number(metadata_json.filename)
+    number_all_of_files = int(metadata_json.allfiles)
+    print(number_of_file)
+    print(number_all_of_files)
 class write_file_and_deocde:
     def decodeimag(img):
         scanned_data = readQR(img)
-        write_file_and_deocde.writefile(scanned_data)
-    def writefile(scanned_data):
-        metadata_index = scanned_data.index("}b'", 0, 30) + 1
-        metadata_recieved = scanned_data[:metadata_index]
-        string_recieved = scanned_data[metadata_index + 2:len(scanned_data) - 1]
-        metadata_json = json.loads(metadata_recieved, object_hook=customStudentDecoder)
-        print(decodePart_number(metadata_json.filename))
+        writefile(scanned_data)
+

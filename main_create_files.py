@@ -13,6 +13,7 @@ from class_write_file_and_decode import write_file_and_deocde
 from class_create_tree_of_files import tree_of_files
 
 import numpy as np
+from class_spilt import splitfile
 
 kilobytes = 1024
 megabytes = kilobytes * 1000
@@ -25,11 +26,11 @@ folder_to_split = "splitted4"
 # list to store files name
 #convert to utf-8
 
-def write_file():
+def write_file(file,lines):
     f = open(file, "w")
     f.close()
     f = codecs.open("temp_file", "a", "utf-8")
-    for line in tree_of_files.create_tree_of_files(dir_path):
+    for line in lines:
         f.write(line)
     f.close()
     #convert
@@ -43,8 +44,7 @@ def write_file():
 
 
 #split json file and send
-write_file()
-from class_spilt import splitfile
+write_file(file, tree_of_files.create_tree_of_files(dir_path))
 splitfile.split(file, folder_to_split, chunksize)
 # send
 #craatefilelist
@@ -52,7 +52,6 @@ splitfile.split(file, folder_to_split, chunksize)
 
 onlyfiles = [f for f in listdir(folder_to_split) if isfile(join(folder_to_split, f))]
 onlyfiles.sort()
-
 
 
 
@@ -68,7 +67,9 @@ def showQRcode(each_file):
     with open(folder_to_split + "\\" + each_file, mode='rb') as file: # b is important -> binary
         JsonHeader_json = JsonHeader()
         JsonHeader_json.filename = each_file
+        JsonHeader_json.allfiles = len(onlyfiles)
         fileContent = json.dumps(JsonHeader_json.__dict__) + str(file.read())
+
     img = qrcode.make(fileContent)
     #show image
     frame_array = np.array(img)
@@ -88,7 +89,7 @@ def showQRcode(each_file):
 for each_file in onlyfiles:
     # input("Press Enter to continue...")
     showQRcode(each_file)
-    sys.exit()
+sys.exit()
 # print(onlyfiles)
 # fileName = "splitted3/part0001"
 # # Data to encode
