@@ -20,9 +20,14 @@ def decoder(image):
 
     qrCodeData = qr.data.decode("utf-8")
     return qrCodeData
+def readQR(image):
+    gray_img = cv2.imread(image)
+    qr = qr_decode(gray_img)
+    if qr:
+        data = qr[0].data.decode("utf-8")
+        return data
 
 
 
-
-print(decoder("MyQRCode2.png"))
+print(readQR("MyQRCode2.png"))
 

@@ -128,7 +128,12 @@ class JsonHeader:
     count = 0
     number_of_files = 0
 
-
+def writefile(scanned_data):
+    metadata_index = scanned_data.index("}b'",0,30)+1
+    metadata_recieved = scanned_data[:metadata_index]
+    string_recieved = scanned_data[metadata_index+2:len(scanned_data)-1]
+    print(metadata_recieved)
+    print(string_recieved)
 def showQRcode(each_file):
 
     with open(folder_to_split + "\\" + each_file, mode='rb') as file: # b is important -> binary
@@ -150,9 +155,11 @@ def showQRcode(each_file):
     def readQR(image):
         qr = qr_decode(image)
         if qr:
-            data = qr[0].data
+            data = qr[0].data.decode("utf-8")
             return data
-    print(readQR(img))
+    scanned_data = readQR(img)
+    writefile(scanned_data)
+
     cv2.waitKey()
     cv2.destroyAllWindows()
     ######################################3

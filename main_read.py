@@ -36,7 +36,7 @@ from pyzbar.pyzbar import decode as qr_decode
 def readQR(image):
     qr = qr_decode(image)
     if qr:
-        data = qr[0].data
+        data = qr[0].data.decode("utf-8")
         return data
 
 
