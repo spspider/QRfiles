@@ -51,13 +51,14 @@ class JsonHeader:
 
 
 
-def showQRcode(each_file):
+def showQRcode(each_file,origianal_filename):
 
-    with open(folder_to_split + "\\" + each_file, mode='rb') as file: # b is important -> binary
+    with open(folder_to_split + "\\" + each_file, mode='rb') as each_splitted_file: # b is important -> binary
         JsonHeader_json = JsonHeader()
-        JsonHeader_json.filename = each_file
-        JsonHeader_json.allfiles = len(onlyfiles)
-        fileContent = json.dumps(JsonHeader_json.__dict__) + str(file.read())
+        JsonHeader_json.p = each_file #part_file
+        JsonHeader_json.a = len(onlyfiles) #allfiles
+        JsonHeader_json.f = str(origianal_filename) #filename
+        fileContent = json.dumps(JsonHeader_json.__dict__) + str(each_splitted_file.read())
 
     img = qrcode.make(fileContent)
     #show image
@@ -77,7 +78,7 @@ def showQRcode(each_file):
 
 for each_file in onlyfiles:
     # input("Press Enter to continue...")
-    showQRcode(each_file)
+    showQRcode(each_file,file)
 sys.exit()
 # print(onlyfiles)
 # fileName = "splitted3/part0001"

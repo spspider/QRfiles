@@ -10,24 +10,24 @@
 
 import os, sys
 readsize = 1024
-
-def join(fromdir, tofile):
-    output = open(tofile, 'w')
-    parts  = os.listdir(fromdir)
-    parts.sort(  )
-    for filename in parts:
-        filepath = os.path.join(fromdir, filename)
-        fileobj  = open(filepath, 'r')
-        while 1:
-            filebytes = fileobj.read(readsize)
-            if not filebytes: break
-            output.write(filebytes)
-        fileobj.close(  )
-    output.close(  )
+class join:
+    def join(fromdir, tofile):
+        output = open(tofile, 'w')
+        parts  = os.listdir(fromdir)
+        parts.sort(  )
+        for filename in parts:
+            filepath = os.path.join(fromdir, filename)
+            fileobj  = open(filepath, 'r')
+            while 1:
+                filebytes = fileobj.read(readsize)
+                if not filebytes: break
+                output.write(filebytes)
+            fileobj.close(  )
+        output.close(  )
 
 if __name__ == '__main__':
     if len(sys.argv) == 2 and sys.argv[1] == '-help':
-        print('Use: join.py [from-dir-name to-file-name]')
+        print('Use: class_join.py [from-dir-name to-file-name]')
     else:
         if len(sys.argv) != 3:
             interactive = 1
