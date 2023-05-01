@@ -3,6 +3,13 @@ import os
 import sys
 import qrcode
 import cv2
+from os import listdir
+from os.path import isfile, join
+import json
+
+from cv2_utils import cv2_utils
+from class_write_file_and_decode import write_file_and_deocde
+from class_create_tree_of_files import tree_of_files
 
 
 kilobytes = 1024
@@ -16,7 +23,6 @@ folder_to_split = "splitted4"
 # list to store files name
 #convert to utf-8
 
-from class_create_tree_of_files import tree_of_files
 def write_file():
     f = open(file, "w")
     f.close()
@@ -41,39 +47,20 @@ splitfile.split(file, folder_to_split, chunksize)
 # send
 #craatefilelist
 
-from os import listdir
-from os.path import isfile, join
+
 onlyfiles = [f for f in listdir(folder_to_split) if isfile(join(folder_to_split, f))]
 onlyfiles.sort()
 
-def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
-    dim = None
-    (h, w) = image.shape[:2]
 
-    if width is None and height is None:
-        return image
-    if width is None:
-        r = height / float(h)
-        dim = (int(w * r), height)
-    else:
-        r = width / float(w)
-        dim = (width, int(h * r))
-
-    return cv2.resize(image, dim, interpolation=inter)
-import json
 
 
 class JsonHeader:
     filename = ""
     count = 0
-    number_of_files = 0
+    number_of_files = 0,
 
-def writefile(scanned_data):
-    metadata_index = scanned_data.index("}b'",0,30)+1
-    metadata_recieved = scanned_data[:metadata_index]
-    string_recieved = scanned_data[metadata_index+2:len(scanned_data)-1]
-    print(metadata_recieved)
-    print(string_recieved)
+
+
 def showQRcode(each_file):
 
     with open(folder_to_split + "\\" + each_file, mode='rb') as file: # b is important -> binary
@@ -85,7 +72,7 @@ def showQRcode(each_file):
     img.save('MyQRCode2.png')
     img = cv2.imread('MyQRCode2.png', cv2.IMREAD_ANYCOLOR)
     # imS = cv2.resize(img, (960, 540))
-    resize = ResizeWithAspectRatio(img, width=600)
+    resize = cv2_utils.ResizeWithAspectRatio(img, width=600)
     cv2.imshow(each_file, resize)
 
     ########################################3
@@ -98,7 +85,7 @@ def showQRcode(each_file):
             data = qr[0].data.decode("utf-8")
             return data
     scanned_data = readQR(img)
-    writefile(scanned_data)
+    write_file_and_deocde.writefile(scanned_data)
 
     cv2.waitKey()
     cv2.destroyAllWindows()
