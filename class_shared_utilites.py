@@ -1,11 +1,11 @@
 import os
 import codecs
-class write_lines_to_files:
+class shared_utilites:
     def write_file(filename, lines):
-        # direcory = filename.rsplit('/', 1)[0]
-        # print(direcory)
-        # if not os.path.exists(direcory):  # caller handles errors
-        #     os.mkdir(direcory)  # make dir, read/write parts
+        if '/' in filename:
+            direcory = filename.rsplit('/', 1)[0]
+            if not os.path.exists(direcory):  # caller handles errors
+                os.mkdir(direcory)  # make dir, read/write parts
         f = open(filename, "w")
         f.close()
         f = codecs.open("temp_file", "a", "utf-8")
@@ -18,3 +18,12 @@ class write_lines_to_files:
             for line in inp:
                 outp.write(line)
         os.remove("temp_file")
+
+    def create_folder(baseFolder,filename):
+        directory_created =""
+        if '/' in filename:
+            directory = baseFolder+filename.rsplit('/', 1)[0]
+            if not os.path.exists(directory):  # caller handles errors
+                for each_directory in directory.split("/"):
+                    directory_created += each_directory + "/"
+                    os.mkdir(directory_created)  # make dir, read/write parts
