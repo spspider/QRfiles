@@ -1,14 +1,31 @@
 import os
 import codecs
+from os.path import isfile, join
+
+
+
 class shared_utilites:
+    def createDirfromFile(filename):
+        tofile = filename.replace("\\", "/")
+        directory_created = ""
+        if '/' in tofile:
+            directory = tofile.rsplit('/', 1)[0]
+            if not os.path.exists(directory):  # caller handles errors
+                for each_directory in directory.split("/"):
+                    directory_created += each_directory + "/"
+                    if not os.path.exists(directory_created):
+                        os.mkdir(directory_created)
     def write_file(filename, lines):
+        directory_created = ""
         if '/' in filename:
-            direcory = filename.rsplit('/', 1)[0]
-            if not os.path.exists(direcory):  # caller handles errors
-                os.mkdir(direcory)  # make dir, read/write parts
+            directory = filename.rsplit('/', 1)[0]
+            if not os.path.exists(directory):  # caller handles errors
+                for each_directory in directory.split("/"):
+                    directory_created += each_directory + "/"
+                    os.mkdir(directory_created)
         f = open(filename, "w")
         f.close()
-        f = codecs.open("temp_file", "a", "utf-8")
+        f = codecs.open("temp_file", mode="a", encoding="utf-8")
         for line in lines:
             f.write(line)
         f.close()
@@ -27,3 +44,8 @@ class shared_utilites:
                 for each_directory in directory.split("/"):
                     directory_created += each_directory + "/"
                     os.mkdir(directory_created)  # make dir, read/write parts
+
+    def load_splitted_files(folder_to_split):
+        onlyfiles = [f for f in os.listdir(folder_to_split) if isfile(join(folder_to_split, f))]
+        onlyfiles.sort()
+        return onlyfiles

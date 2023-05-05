@@ -9,15 +9,21 @@
 ##########################################################
 
 import os, sys
-readsize = 1024
+
+from class_shared_utilites import shared_utilites
+
+readsize = 2000
 class join:
     def join(fromdir, tofile):
-        output = open(tofile, 'w')
+        shared_utilites.createDirfromFile(tofile)
+        tofile = tofile.replace("\\","/")
+        print(tofile)
+        output = open(tofile,encoding="utf-8", mode='w')
         parts  = os.listdir(fromdir)
         parts.sort(  )
         for filename in parts:
             filepath = os.path.join(fromdir, filename)
-            fileobj  = open(filepath, 'r')
+            fileobj  = open(filepath,encoding="utf-8", mode='r')
             while 1:
                 filebytes = fileobj.read(readsize)
                 if not filebytes: break

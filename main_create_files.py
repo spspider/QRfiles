@@ -7,6 +7,8 @@ import cv2
 from os import listdir
 from os.path import isfile, join
 import json
+import cyrtranslit
+
 
 from cv2_utils import cv2_utils
 from class_write_file_and_decode import write_file_and_deocde
@@ -19,7 +21,7 @@ from class_spilt import splitfile
 
 kilobytes = 1024
 megabytes = kilobytes * 1000
-chunksize = int(1500) #default: roughly a floppy
+chunksize = int(2000) #default: roughly a floppy
 
 # import split
 tree_of_files_json = r"output.json"
@@ -31,10 +33,6 @@ shared_utilites.write_file(tree_of_files_json, array_of_files)
 #craatefilelist
 
 
-def onlyfiles():
-    onlyfiles = [f for f in listdir(folder_to_split) if isfile(join(folder_to_split, f))]
-    onlyfiles.sort()
-    return onlyfiles
 
 def listToString(s):
     # initialize an empty string
@@ -45,9 +43,9 @@ def listToString(s):
     # return string
     return str1
 class JsonHeader:
-    f = ""
-    a = 0
-    p = 0,
+    f = "",
+    a = "",
+    p = ""
 class User():
   def __init__(self, input):
       self.__dict__.update(input)
@@ -57,44 +55,62 @@ def decodePart_number(filename):
         return int(match.group())
 def showQRcode(each_file,origianal_filename,onlyfiles):
 
-    with open(folder_to_split + "\\" + each_file, mode='rb') as each_splitted_file: # b is important -> binary
+    with open(folder_to_split + "\\" + each_file,encoding="utf-8", mode='r') as each_splitted_file: # b is important -> binary
         JsonHeader_json = JsonHeader()
         JsonHeader_json.p = decodePart_number(each_file) #part_file
         JsonHeader_json.a = len(onlyfiles) #allfiles
         JsonHeader_json.f = str(origianal_filename) #filename
-        fileContent = str(json.dumps(JsonHeader_json.__dict__)) + str(each_splitted_file.read())
+        # fileContent = str(each_splitted_file.read())
+        fileContent = str(json.dumps(JsonHeader_json.__dict__))+"\n&&&&&&&&&&&&777777777777\n" + str(each_splitted_file.read())
 
-    print(fileContent)
-    img = qrcode.make(fileContent)
-    #show image
-    frame_array = np.array(img)
-    ########################################
-    img.save('MyQRCode2.png')
-    img = cv2.imread('MyQRCode2.png', cv2.IMREAD_ANYCOLOR)
-    # imS = cv2.resize(img, (960, 540))
-    resize = cv2_utils.ResizeWithAspectRatio(img, width=600)
-    cv2.imshow(each_file, resize)
-    #check if that file can be read
-    write_file_and_deocde.decodeimag(img)
+        img = qrcode.make(fileContent)
+        #show image
+        frame_array = np.array(img)
+        ########################################
+        img.save('MyQRCode2.png')
+        img = cv2.imread('MyQRCode2.png', cv2.IMREAD_ANYCOLOR)
+        # imS = cv2.resize(img, (960, 540))
+        resize = cv2_utils.ResizeWithAspectRatio(img, width=600)
+        cv2.imshow(each_file, resize)
+        #check if that file can be read
+        write_file_and_deocde.decodeimag(img)
 
-    cv2.waitKey()
-    cv2.destroyAllWindows()
+        # cv2.waitKey()
+        cv2.destroyAllWindows()
+def trasnlit_each_file(splitted_file):
+    file1 = open(splitted_file,encoding = 'utf-8', mode = 'r')
+    Lines = file1.readlines()
+    count = 0
+    # Strips the newline character
+    Array_Of_Lines = []
+    for line in Lines:
+        count += 1
+        line_traslitted = cyrtranslit.to_latin(line.strip())
+        Array_Of_Lines.append(line_traslitted.join("\n"))
+    shared_utilites.write_file(splitted_file, Array_Of_Lines)
+from transliterate.contrib.apps.translipsum import TranslipsumGenerator
 def startSendFiles(filename_path, name_filename):
     #splitfile and send
     file = filename_path +"\\" + name_filename
-    splitfile.split(file, folder_to_split, chunksize)
-    for each_onlyfiles in onlyfiles():
-        showQRcode(each_onlyfiles,file,onlyfiles())
-        # input("Press Enter to continue..."+each_onlyfiles)
+    #delete in splitted folder
+    if os.path.isdir(folder_to_split):
+        for eachFile in shared_utilites.load_splitted_files(folder_to_split):
+            os.remove(folder_to_split+"/"+eachFile)
 
+    splitfile.split(file, folder_to_split, chunksize)
+    get_splitted_files = shared_utilites.load_splitted_files(folder_to_split)
+    for each_onlyfiles in get_splitted_files:
+        # trasnlit_each_file(folder_to_split+"/"+each_onlyfiles)
+        showQRcode(each_onlyfiles, file, get_splitted_files)
+        # input("Press Enter to continue..."+each_onlyfiles)
 
 
 def create_sequence():
     json_file_list = listToString(array_of_files)
-    user = json.loads(json_file_list, object_hook=User)
-    for key, value in json.loads(json_file_list).items():
+    # user = json.loads(json_file_list, object_hook=User)
+    for folder_to_file, value in json.loads(json_file_list).items():
         for each_filename in value:
-            startSendFiles(key,each_filename)
+            startSendFiles(folder_to_file,each_filename)
 
 create_sequence()
 

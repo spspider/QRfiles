@@ -46,7 +46,6 @@ class tree_of_files:
             # filelist = filelist[:-2]
             Array_lineswithfiles.append(str(filelist))
         Array_lineswithfiles[len(Array_lineswithfiles) - 1] = Array_lineswithfiles[len(Array_lineswithfiles) - 1][:-2]
-        print()
         Array_lineswithfiles.append("}")
         return Array_lineswithfiles
 
