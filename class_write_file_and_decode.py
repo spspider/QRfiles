@@ -33,11 +33,13 @@ def writefile(scanned_data):
     shared_utilites.write_file(filename, string_recieved)
     if number_of_file == number_all_of_files:
         #end of transportation
-        class_join.join.join(recieve_folder,"recieved_files\\"+original_filename)
+        final_file_location = "recieved_files\\"+original_filename
+        if os.path.isfile(final_file_location):
+            os.remove(final_file_location)
+        class_join.join.join(recieve_folder,final_file_location)
         if os.path.isdir(recieve_folder):
             for eachFile in shared_utilites.load_splitted_files(recieve_folder):
                 os.remove(recieve_folder + "/" + eachFile)
-        exit()
         #move_file
         # shared_utilites.create_folder("folder/","folder/"+original_filename)
 
