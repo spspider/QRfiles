@@ -8,7 +8,7 @@ from os import listdir
 from os.path import isfile, join
 import json
 import cyrtranslit
-
+import qrcode as qrcode
 
 from cv2_utils import cv2_utils
 from class_write_file_and_decode import write_file_and_deocde
@@ -21,7 +21,7 @@ from class_spilt import splitfile
 
 kilobytes = 1024
 megabytes = kilobytes * 1000
-chunksize = int(2000) #default: roughly a floppy
+chunksize = int(1500) #default: roughly a floppy
 
 # import split
 tree_of_files_json = r"output.json"
@@ -54,16 +54,24 @@ def decodePart_number(filename):
     if match:
         return int(match.group())
 def showQRcode(each_file,origianal_filename,onlyfiles):
-
     with open(folder_to_split + "\\" + each_file,encoding="utf-8", mode='r') as each_splitted_file: # b is important -> binary
         JsonHeader_json = JsonHeader()
         JsonHeader_json.p = decodePart_number(each_file) #part_file
         JsonHeader_json.a = len(onlyfiles) #allfiles
-        JsonHeader_json.f = str(origianal_filename) #filename
-        # fileContent = str(each_splitted_file.read())
-        fileContent = str(json.dumps(JsonHeader_json.__dict__))+"\n&&&&&&&&&&&&777777777777\n" + str(each_splitted_file.read())
 
-        img = qrcode.make(fileContent)
+        JsonHeader_json.f = str(origianal_filename).replace("\\","/") #filename
+        # fileContent = str(each_splitted_file.read())
+        fileContent = str(json.dumps(JsonHeader_json.__dict__)) + "\n&&&&&&&&&&&&777777777777\n"+ str(each_splitted_file.read())
+        print("send:")
+        print(fileContent)
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=2,
+            border=2,
+        )
+        qr.add_data(fileContent, optimize=0)
+        img = qr.make_image(fill_color="black", back_color="white")
         #show image
         frame_array = np.array(img)
         ########################################

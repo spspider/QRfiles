@@ -12,7 +12,7 @@ import sys, os
 
 kilobytes = 1024
 megabytes = kilobytes * 1000
-chunksize = int(400)  # default: roughly a floppy
+chunksize = int(1500)  # default: roughly a floppy
 class splitfile:
     def split(fromfile, todir, chunksize=chunksize):
         if not os.path.exists(todir):  # caller handles errors

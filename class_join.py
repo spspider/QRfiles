@@ -12,12 +12,11 @@ import os, sys
 
 from class_shared_utilites import shared_utilites
 
-readsize = 2000
+readsize = 1500
 class join:
     def join(fromdir, tofile):
         shared_utilites.createDirfromFile(tofile)
         tofile = tofile.replace("\\","/")
-        print(tofile)
         output = open(tofile,encoding="utf-8", mode='w')
         parts  = os.listdir(fromdir)
         parts.sort(  )
