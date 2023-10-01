@@ -49,18 +49,15 @@ while True:
     sct_img = sct.grab(bounding_box)
 
     frame_array = np.array(sct_img)
-    # frame_array = np.flip(frame_array[:, :, :3], 2)
     screenName = 'screen'
-    dim = ResizeWithAspectRatio(frame_array, width=600)
-    resize = cv2.resize(frame_array, dim)
-    drawRectangle(imageRect)
-    cv2.imshow(screenName, resize)
-    imageRect = cv2.getWindowImageRect(screenName)
-    #
-    # print(dim)
-    # data = readQR(frame_array)
+    # dim = ResizeWithAspectRatio(frame_array, width=600)
+    # resize = cv2.resize(frame_array, dim)
+    # drawRectangle(imageRect)
+    # cv2.imshow(screenName, resize)
+    # imageRect = cv2.getWindowImageRect(screenName)
 
     write_file_and_deocde.decodeimag(frame_array)
-    if (cv2.waitKey(1) & 0xFF) == ord('q'):
-        cv2.destroyAllWindows()
-        break
+
+    # if (cv2.waitKey(1) & 0xFF) == ord('q'):
+    #     cv2.destroyAllWindows()
+    #     break

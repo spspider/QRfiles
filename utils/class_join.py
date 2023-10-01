@@ -9,7 +9,7 @@
 ##########################################################
 
 import os, sys
-
+import re
 from utils.class_shared_utilites import shared_utilites
 
 readsize = 1500
@@ -31,6 +31,26 @@ class class_join_join:
             # os.unlink(fromdir+filename)
         output.close(  )
 
+    def join_filename(directory, filename):
+        # extract the basename and extension from the filename
+        pattern = re.compile(f"{filename}part\d+$")
+        # get a list of all files in the directory that match the pattern
+        partfiles = [f for f in os.listdir(directory) if pattern.match(f)]
+        # sort the list of files by their numeric part
+        partfiles.sort(key=lambda f: int(f[len(filename) + 4:]))
+
+        # create the output file and concatentate the part files into it
+        output_filename = os.path.join(directory, filename)
+        with open(output_filename, 'w', encoding='utf-8') as output:
+            for partfile in partfiles:
+                partfile_path = os.path.join(directory, partfile)
+                with open(partfile_path, 'r', encoding='utf-8') as part:
+                    output.write(part.read())
+                # os.remove(partfile_path)
+        for f in partfiles:
+            if f != filename:
+                os.remove(os.path.join(directory, f))
+        return output_filename
 if __name__ == '__main__':
     if len(sys.argv) == 2 and sys.argv[1] == '-help':
         print('Use: class_join.py [from-dir-name to-file-name]')

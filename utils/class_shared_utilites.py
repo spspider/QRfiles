@@ -22,7 +22,8 @@ class shared_utilites:
             if not os.path.exists(directory):  # caller handles errors
                 for each_directory in directory.split("/"):
                     directory_created += each_directory + "/"
-                    os.mkdir(directory_created)
+                    if not os.path.exists(directory_created):
+                        os.mkdir(directory_created)
         f = open(filename, "w")
         f.close()
         f = codecs.open("temp_file", mode="a", encoding="utf-8")

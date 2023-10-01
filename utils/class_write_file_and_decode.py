@@ -4,6 +4,10 @@ from collections import namedtuple
 import re
 from pyzbar.pyzbar import decode as qr_decode
 import cv2
+
+import pyautogui
+import time
+
 import numpy as np
 
 from utils.class_shared_utilites import shared_utilites
@@ -53,7 +57,7 @@ def readQR(image):
 recieve_folder = "recieved/"
 
 
-def check_if_all_files_exists(number_all_of_files, recieve_folder, final_file_location):
+def check_if_all_files_exists(number_all_of_files, recieve_folder):
     parts = os.listdir(recieve_folder)
     parts.sort()
     if len(parts) == number_all_of_files:
@@ -61,6 +65,32 @@ def check_if_all_files_exists(number_all_of_files, recieve_folder, final_file_lo
         return True
     else:
         return False
+    pass
+
+
+def check_if_all_files_exists_partfiles(number_all_of_files, directory_files, filename):
+    # create a regular expression pattern to match the desired filenames
+    pattern = re.compile(f"{filename}part\d+$")
+    # get a list of all files in the directory that match the pattern
+    partfiles = [f for f in os.listdir(directory_files) if pattern.match(f)]
+    # sort the list of files by their numeric part
+    partfiles.sort(key=lambda f: int(f[len(filename) + 4:]))
+    # check if all expected files exist
+    all_files_exist = len(partfiles) == number_all_of_files and all(os.path.isfile(os.path.join(directory_files, f)) for f in partfiles)
+    if all_files_exist:
+        return True
+        # print("All files exist.")
+
+
+def delete_all_part_files(directory_files, filename):
+    pattern = re.compile(f"{filename}part\d+$")
+    # get a list of all files in the directory that match the pattern
+    partfiles = [f for f in os.listdir(directory_files) if pattern.match(f)]
+    # sort the list of files by their numeric part
+    partfiles.sort(key=lambda f: int(f[len(filename) + 4:]))
+    for f in os.listdir(directory_files):
+        if pattern.match(f) and f != filename:
+            os.remove(os.path.join(directory_files, f))
     pass
 
 
@@ -74,20 +104,40 @@ def writefile(scanned_data):
     number_all_of_files = int(metadata_json.a)
     original_filename = str(metadata_json.f).replace("\\", "/").replace("¥¥", "/")
 
-    filename = recieve_folder + ('part%04d' % number_of_file)
+    ####################feature recieve with folder name
+    filename = recieve_folder +"/"+original_filename+ ('part%04d' % number_of_file)
+
     shared_utilites.write_file(filename, string_recieved)
+    ##########################
 
-    # if number_of_file == number_all_of_files:
+    directory_files = (recieve_folder + "/" + original_filename).rsplit('/', 1)[0]
+    filename = original_filename.rsplit('/', 1)[-1]
 
+    if check_if_all_files_exists_partfiles(number_all_of_files,directory_files,filename) == True:
+        class_join_join.join_filename(directory_files,filename)
+        # send End of transmittion:
+        pyautogui.keyDown('q')
+        time.sleep(2)
+        pyautogui.keyUp('q')
+
+    # Press and hold the "q" key for 2 seconds
+
+    # delete_all_part_files(directory_files, filename)
+    # if check_if_all_files_exists(number_all_of_files, directory_files) == True:
+    #     class_join_join.join_filename(directory_files,filename)
+
+
+    # filename = recieve_folder + ('part%04d' % number_of_file)
+    # shared_utilites.write_file(filename, string_recieved)
         # end of transportation
-    final_file_location = "recieved_files\\" + original_filename
-    if check_if_all_files_exists(number_all_of_files, recieve_folder, final_file_location) == True:
-        if os.path.isfile(final_file_location):
-            os.remove(final_file_location)
-        class_join_join.join(recieve_folder, final_file_location)
-        if os.path.isdir(recieve_folder):
-            for eachFile in shared_utilites.load_splitted_files(recieve_folder):
-                os.remove(recieve_folder + "/" + eachFile)
+    # final_file_location = "recieved_files\\" + original_filename
+    # if check_if_all_files_exists(number_all_of_files, recieve_folder, final_file_location) == True:
+    #     if os.path.isfile(final_file_location):
+    #         os.remove(final_file_location)
+    #     class_join_join.join(recieve_folder, final_file_location)
+    #     if os.path.isdir(recieve_folder):
+    #         for eachFile in shared_utilites.load_splitted_files(recieve_folder):
+    #             os.remove(recieve_folder + "/" + eachFile)
         # move_file
 
 
