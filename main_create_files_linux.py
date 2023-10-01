@@ -7,8 +7,8 @@ import cyrtranslit
 import qrcode as qrcode
 
 from utils.cv2_utils import cv2_utils
-from utils.class_create_tree_of_files import tree_of_files
-from utils.class_shared_utilites import shared_utilites
+from utils.class_create_tree_of_files_linux import tree_of_files
+from utils.class_shared_utilites_linux import shared_utilites
 
 
 import numpy as np
@@ -62,23 +62,25 @@ def showQRcode(each_file,origianal_filename,onlyfiles):
             border=2,
         )
         qr.add_data(fileContent, optimize=0)
-        img = qr.make_image(fill_color="black", back_color="white")
+        qr.make()
+        text = qr.make_ascii()
+        print(text)
         #show image
-        frame_array = np.array(img)
-        ########################################
-        img.save('MyQRCode2.png')
-        img = cv2.imread('MyQRCode2.png', cv2.IMREAD_ANYCOLOR)
-        # imS = cv2.resize(img, (960, 540))
-        resize = cv2_utils.ResizeWithAspectRatio(img, width=600)
-        cv2.imshow(each_file, resize)
-        #check if that file can be read
-        # Disabling write and decode function, to test it
-        # write_file_and_deocde.decodeimag(img)
-        while True:
-            key = cv2.waitKey()
-            if key == ord('q'):
-                cv2.destroyAllWindows()
-                break  # exit the loop
+#         frame_array = np.array(img)
+#         ########################################
+#         img.save('MyQRCode2.png')
+#         img = cv2.imread('MyQRCode2.png', cv2.IMREAD_ANYCOLOR)
+#         # imS = cv2.resize(img, (960, 540))
+#         resize = cv2_utils.ResizeWithAspectRatio(img, width=600)
+#         cv2.imshow(each_file, resize)
+#         #check if that file can be read
+#         # Disabling write and decode function, to test it
+#         # write_file_and_deocde.decodeimag(img)
+#         while True:
+#             key = cv2.waitKey()
+#             if key == ord('q'):
+#                 cv2.destroyAllWindows()
+#                 break  # exit the loop
 def trasnlit_each_file(splitted_file):
     file1 = open(splitted_file,encoding = 'utf-8', mode = 'r')
     Lines = file1.readlines()
