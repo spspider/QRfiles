@@ -1,5 +1,5 @@
 import os
-
+import json
 
 def insert_dash(string, index):
     return string[:index] + r"\\" + string[index + 1:]
@@ -49,4 +49,14 @@ class tree_of_files:
         Array_lineswithfiles.append("}")
         return Array_lineswithfiles
 
-
+    def create_tree_of_files_json(dir_path):
+        tree = {}
+        for root, dirs, files in os.walk(dir_path):
+            # remove the base directory from the path
+            rel_path = root.replace(dir_path, '', 1).lstrip('/')
+            # create a dictionary for each subdirectory
+            subdir = tree.setdefault(rel_path, {})
+            for filename in files:
+                # add each file to the current subdirectory
+                subdir[filename] = None
+        return json.dumps(tree)

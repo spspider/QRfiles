@@ -116,9 +116,9 @@ def writefile(scanned_data):
     if check_if_all_files_exists_partfiles(number_all_of_files,directory_files,filename) == True:
         class_join_join.join_filename(directory_files,filename)
         # send End of transmittion:
-        pyautogui.keyDown('q')
-        time.sleep(2)
-        pyautogui.keyUp('q')
+    pyautogui.keyDown('q')
+    # time.sleep()
+    pyautogui.keyUp('q')
 
     # Press and hold the "q" key for 2 seconds
 

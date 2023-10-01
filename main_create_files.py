@@ -110,6 +110,7 @@ def startSendFiles(filename_path, name_filename):
 
 
 def create_sequence():
+
     json_file_list = listToString(array_of_files)
     # user = json.loads(json_file_list, object_hook=User)
     for folder_to_file, value in json.loads(json_file_list).items():
