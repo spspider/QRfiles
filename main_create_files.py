@@ -1,23 +1,19 @@
 import os
 import re
-import shutil
 import sys
-import qrcode
 import cv2
-from os import listdir
-from os.path import isfile, join
 import json
 import cyrtranslit
 import qrcode as qrcode
 
-from cv2_utils import cv2_utils
-from class_write_file_and_decode import write_file_and_deocde
-from class_create_tree_of_files import tree_of_files
-from class_shared_utilites import shared_utilites
+from utils.cv2_utils import cv2_utils
+from utils.class_write_file_and_decode import write_file_and_deocde
+from utils.class_create_tree_of_files import tree_of_files
+from utils.class_shared_utilites import shared_utilites
 
 
 import numpy as np
-from class_spilt import splitfile
+from utils.class_spilt import splitfile
 
 kilobytes = 1024
 megabytes = kilobytes * 1000
@@ -77,10 +73,13 @@ def showQRcode(each_file,origianal_filename,onlyfiles):
         resize = cv2_utils.ResizeWithAspectRatio(img, width=600)
         cv2.imshow(each_file, resize)
         #check if that file can be read
-        write_file_and_deocde.decodeimag(img)
-
-        # cv2.waitKey()
-        cv2.destroyAllWindows()
+        # Disabling write and decode function, to test it
+        # write_file_and_deocde.decodeimag(img)
+        while True:
+            key = cv2.waitKey()
+            if key == ord('q'):
+                cv2.destroyAllWindows()
+                break  # exit the loop
 def trasnlit_each_file(splitted_file):
     file1 = open(splitted_file,encoding = 'utf-8', mode = 'r')
     Lines = file1.readlines()
@@ -92,10 +91,12 @@ def trasnlit_each_file(splitted_file):
         line_traslitted = cyrtranslit.to_latin(line.strip())
         Array_Of_Lines.append(line_traslitted.join("\n"))
     shared_utilites.write_file(splitted_file, Array_Of_Lines)
-from transliterate.contrib.apps.translipsum import TranslipsumGenerator
+
+
 def startSendFiles(filename_path, name_filename):
     #splitfile and send
     file = filename_path +"\\" + name_filename
+
     #delete in splitted folder
     if os.path.isdir(folder_to_split):
         for eachFile in shared_utilites.load_splitted_files(folder_to_split):
@@ -120,10 +121,4 @@ create_sequence()
 
     ######################################3
 
-# for each_file in onlyfiles:
-#     # input("Press Enter to continue...")
-#     showQRcode(each_file,file)
 sys.exit()
-# print(onlyfiles)
-# fileName = "splitted3/part0001"
-# # Data to encode

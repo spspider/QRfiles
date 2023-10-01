@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 from mss import mss
+from utils.class_write_file_and_decode import write_file_and_deocde
 from PIL import Image
 resolutionX = 1920
 resolutionY = 1080
@@ -33,12 +34,15 @@ imageRect = (1,1,1,1)
 
 
 from pyzbar.pyzbar import decode as qr_decode
-def readQR(image):
-    qr = qr_decode(image)
-    if qr:
-        data = qr[0].data.decode("utf-8")
-        return data
 
+def readQR(image):
+    try:
+        qr = qr_decode(image)
+        if qr:
+            data = qr[0].data.decode("utf-8")
+            return data
+    except Exception:
+        pass
 
 
 while True:
@@ -54,10 +58,9 @@ while True:
     imageRect = cv2.getWindowImageRect(screenName)
     #
     # print(dim)
-    data = readQR(frame_array)
+    # data = readQR(frame_array)
 
-    if data:
-        print(data)
+    write_file_and_deocde.decodeimag(frame_array)
     if (cv2.waitKey(1) & 0xFF) == ord('q'):
         cv2.destroyAllWindows()
         break

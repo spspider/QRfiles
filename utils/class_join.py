@@ -10,10 +10,10 @@
 
 import os, sys
 
-from class_shared_utilites import shared_utilites
+from utils.class_shared_utilites import shared_utilites
 
 readsize = 1500
-class join:
+class class_join_join:
     def join(fromdir, tofile):
         shared_utilites.createDirfromFile(tofile)
         tofile = tofile.replace("\\","/")
@@ -28,6 +28,7 @@ class join:
                 if not filebytes: break
                 output.write(filebytes)
             fileobj.close(  )
+            # os.unlink(fromdir+filename)
         output.close(  )
 
 if __name__ == '__main__':
