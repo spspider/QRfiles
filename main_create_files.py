@@ -7,9 +7,8 @@ import cyrtranslit
 import qrcode as qrcode
 
 from utils.cv2_utils import cv2_utils
-from utils.class_create_tree_of_files import tree_of_files
 from utils.class_shared_utilites import shared_utilites
-
+from utils.class_write_file_and_decode import write_file_and_deocde
 
 import numpy as np
 from utils.class_spilt import splitfile
@@ -20,23 +19,13 @@ chunksize = int(1500) #default: roughly a floppy
 
 # import split
 tree_of_files_json = r"output.json"
-dir_path: str = r'ProgramToSend'
+dir_path: str = r'FilesToSend'
 folder_to_split = "splitted3"
 
-array_of_files = tree_of_files.create_tree_of_files(dir_path)
-shared_utilites.write_file(tree_of_files_json, array_of_files)
 #craatefilelist
 
 
 
-def listToString(s):
-    # initialize an empty string
-    str1 = ""
-    # traverse in the string
-    for ele in s:
-        str1 += ele
-    # return string
-    return str1
 class JsonHeader:
     f = "",
     a = "",
@@ -73,7 +62,7 @@ def showQRcode(each_file,origianal_filename,onlyfiles):
         cv2.imshow(each_file, resize)
         #check if that file can be read
         # Disabling write and decode function, to test it
-        # write_file_and_deocde.decodeimag(img)
+        # write_file_and_deocde.decodeimag(frame_array)
         while True:
             key = cv2.waitKey()
             if key == ord('q'):
@@ -92,14 +81,12 @@ def trasnlit_each_file(splitted_file):
     shared_utilites.write_file(splitted_file, Array_Of_Lines)
 
 
-def startSendFiles(filename_path, name_filename):
-    #splitfile and send
-    file = filename_path +"\\" + name_filename
-
-    #delete in splitted folder
+def startSendFiles(file):
+    # splitfile and send
+    # delete in splitted folder
     if os.path.isdir(folder_to_split):
         for eachFile in shared_utilites.load_splitted_files(folder_to_split):
-            os.remove(folder_to_split+"/"+eachFile)
+            os.remove(folder_to_split + "/" + eachFile)
 
     splitfile.split(file, folder_to_split, chunksize)
     get_splitted_files = shared_utilites.load_splitted_files(folder_to_split)
@@ -109,13 +96,22 @@ def startSendFiles(filename_path, name_filename):
         # input("Press Enter to continue..."+each_onlyfiles)
 
 
-def create_sequence():
+def list_all_files(root_dir):
+    file_list = []
+    for current_dir, dirs, files in os.walk(root_dir):
+        # loop through all files in the current directory
+        for file in files:
+            # add the file to the list
+            file_list.append(os.path.join(current_dir, file))
+    return file_list
 
-    json_file_list = listToString(array_of_files)
-    # user = json.loads(json_file_list, object_hook=User)
-    for folder_to_file, value in json.loads(json_file_list).items():
-        for each_filename in value:
-            startSendFiles(folder_to_file,each_filename)
+
+def create_sequence():
+    list_of_files = list_all_files(dir_path)
+
+    for each_file in list_of_files:
+        startSendFiles(each_file)
+
 
 create_sequence()
 

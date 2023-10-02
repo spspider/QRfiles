@@ -17,15 +17,8 @@ chunksize = int(1500)  # default: roughly a floppy
 
 # import split
 tree_of_files_json = r"output.json"
-dir_path: str = r'ProgramToSend'
+dir_path: str = r'FilesToSend'
 folder_to_split = "splitted3"
-
-array_of_files = tree_of_files.create_tree_of_files(dir_path)
-shared_utilites.write_file(tree_of_files_json, array_of_files)
-
-
-# craatefilelist
-
 
 def listToString(s):
     # initialize an empty string
@@ -77,23 +70,6 @@ def showQRcode(each_file, origianal_filename, onlyfiles):
         qr_image.save("test.png")
 
         # show image
-
-
-#         frame_array = np.array(img)
-#         ########################################
-#         img.save('MyQRCode2.png')
-#         img = cv2.imread('MyQRCode2.png', cv2.IMREAD_ANYCOLOR)
-#         # imS = cv2.resize(img, (960, 540))
-#         resize = cv2_utils.ResizeWithAspectRatio(img, width=600)
-#         cv2.imshow(each_file, resize)
-#         #check if that file can be read
-#         # Disabling write and decode function, to test it
-#         # write_file_and_deocde.decodeimag(img)
-#         while True:
-#             key = cv2.waitKey()
-#             if key == ord('q'):
-#                 cv2.destroyAllWindows()
-#                 break  # exit the loop
 def trasnlit_each_file(splitted_file):
     file1 = open(splitted_file, encoding='utf-8', mode='r')
     Lines = file1.readlines()
@@ -135,7 +111,6 @@ def list_all_files(root_dir):
 def create_sequence():
     list_of_files = list_all_files(dir_path)
 
-    # array_of_files = create_array_of_files()
     for each_file in list_of_files:
         startSendFiles(each_file)
 

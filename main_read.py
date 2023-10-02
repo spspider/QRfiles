@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 from mss import mss
 from utils.class_write_file_and_decode import write_file_and_deocde
+from pyzbar.pyzbar import decode as qr_decode
 from PIL import Image
 resolutionX = 1920
 resolutionY = 1080
@@ -33,7 +34,7 @@ sct = mss()
 imageRect = (1,1,1,1)
 
 
-from pyzbar.pyzbar import decode as qr_decode
+
 
 def readQR(image):
     try:

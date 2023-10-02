@@ -1,6 +1,6 @@
 import subprocess
 
-with open("modules_send.txt", "r") as file:
+with open("modules_read.txt", "r") as file:
     modules = [line.strip() for line in file.readlines()]
 
 for module in modules:
