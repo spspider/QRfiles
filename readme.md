@@ -1,11 +1,20 @@
-Copy FROM virtual desktop:
---------------------
-firstly you need to install python3, pip(3)
+**this program can copy your files from a virtual computer where you only see the screen and can interact with it to your computer (host)**
 
 
-go to folder miniprog/ run command:
+
+# Copy FROM virtual desktop:
+
+### Windows virtual machine:
 
 ```
+cd miniprog/  # cd to folder miniprog
+python3 install_all_modules.py
+```
+### Linux virtual Machine:
+
+```
+sudo apt-get install libjpeg-dev -y
+sudo apt install python3-pip
 cd miniprog/  # cd to folder miniprog
 python3 install_all_modules.py
 ```
@@ -22,10 +31,4 @@ and now, point you mouse pointer to virtual Desktop window, it will hit button '
 
 
 
-install pip:
-------------------
-```
-sudo apt-get install libjpeg-dev -y
-sudo apt install python3-pip
-```
 
