@@ -67,7 +67,13 @@ def check_if_all_files_exists(number_all_of_files, recieve_folder):
         return False
     pass
 
-
+def list_of_parts(directory_files,filename):
+    pattern = re.compile(f"{filename}part\d+$")
+    # get a list of all files in the directory that match the pattern
+    partfiles = [f for f in os.listdir(directory_files) if pattern.match(f)]
+    # sort the list of files by their numeric part
+    partfiles.sort(key=lambda f: int(f[len(filename) + 4:]))
+    return partfiles
 def check_if_all_files_exists_partfiles(number_all_of_files, directory_files, filename):
     # create a regular expression pattern to match the desired filenames
     pattern = re.compile(f"{filename}part\d+$")
@@ -79,6 +85,7 @@ def check_if_all_files_exists_partfiles(number_all_of_files, directory_files, fi
     all_files_exist = len(partfiles) == number_all_of_files and all(os.path.isfile(os.path.join(directory_files, f)) for f in partfiles)
     if all_files_exist:
         return True
+    return False
         # print("All files exist.")
 
 
@@ -96,8 +103,17 @@ def delete_all_part_files(directory_files, filename):
 
 def writefile(scanned_data):
     # print(scanned_data)
-    metadata_index = scanned_data.index("\n&&&&&&&&&&&&777777777777\n") + 1
+    metadata_index = -1
+    try:
+        metadata_index = scanned_data.index("\n&&&&&&&&&&&&777777777777\n") + 1
+        metadata = scanned_data[metadata_index:]
+    except ValueError:
+        print("Error: Metadata marker not found in scanned data")
+        #detached
+        print(scanned_data)
+        exit(1)
     metadata_recieved = scanned_data[:metadata_index] # full metadata
+
     string_recieved = scanned_data[metadata_index + 25:len(scanned_data)] # which data we are recieved
     metadata_json = json.loads(metadata_recieved, object_hook=customStudentDecoder)
     number_of_file = int(metadata_json.p)
@@ -105,13 +121,29 @@ def writefile(scanned_data):
     original_filename = str(metadata_json.f).replace("\\", "/").replace("¥¥", "/")
 
     ####################feature recieve with folder name
-    filename = recieve_folder +"/"+original_filename+ ('part%04d' % number_of_file)
-
-    shared_utilites.write_file(filename, string_recieved)
+    filename_part = os.path.join(recieve_folder, original_filename + ('part%04d' % number_of_file))
+    filename = os.path.join(recieve_folder, original_filename)
+    # filename = recieve_folder +"/"+original_filename+ ('part%04d' % number_of_file)
+    if not os.path.exists(filename):
+        shared_utilites.write_file(filename_part, string_recieved)
+    else:
+        # there should write some another output, like s - file exist, and we need to pass transmission
+        pyautogui.keyDown('s')
+        pyautogui.keyUp('s')
+        print("File exist, skip",filename)
+        return
     ##########################
 
     directory_files = (recieve_folder + "/" + original_filename).rsplit('/', 1)[0]
     filename = original_filename.rsplit('/', 1)[-1]
+
+    if number_all_of_files == number_of_file: # latest file in sequence
+        if check_if_all_files_exists_partfiles(number_all_of_files,directory_files,filename) != True:
+            # end of transmittion of one file, if number of files less then actual number, then we need repeat transmittion.
+            print("ERRRRRRRROOOORRR file not recieved", original_filename)
+            pyautogui.keyDown('a')
+            pyautogui.keyUp('a')
+            return
 
     if check_if_all_files_exists_partfiles(number_all_of_files,directory_files,filename) == True:
         class_join_join.join_filename(directory_files,filename)

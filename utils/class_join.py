@@ -46,10 +46,13 @@ class class_join_join:
                 partfile_path = os.path.join(directory, partfile)
                 with open(partfile_path, 'r', encoding='utf-8') as part:
                     output.write(part.read())
-                # os.remove(partfile_path)
+                os.remove(partfile_path)
         for f in partfiles:
             if f != filename:
-                os.remove(os.path.join(directory, f))
+                try:
+                    os.remove(os.path.join(directory, f))
+                except FileNotFoundError:
+                    pass
         return output_filename
 if __name__ == '__main__':
     if len(sys.argv) == 2 and sys.argv[1] == '-help':

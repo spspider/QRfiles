@@ -15,7 +15,7 @@ class shared_utilites:
                     directory_created += each_directory + "/"
                     if not os.path.exists(directory_created):
                         os.mkdir(directory_created)
-    def write_file(filename, lines):
+    def write_file(filename: str, lines: str):
         directory_created = ""
         if '/' in filename:
             directory = filename.rsplit('/', 1)[0]

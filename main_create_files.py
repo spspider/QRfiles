@@ -21,7 +21,8 @@ chunksize = int(1500) #default: roughly a floppy
 tree_of_files_json = r"output.json"
 dir_path: str = r'FilesToSend'
 folder_to_split = "splitted3"
-
+skip_that_file = False
+reset_index = False
 #craatefilelist
 
 
@@ -38,6 +39,7 @@ def decodePart_number(filename):
     if match:
         return int(match.group())
 def showQRcode(each_file,origianal_filename,onlyfiles):
+    global skip_that_file, reset_index
     with open(folder_to_split + "\\" + each_file,encoding="utf-8", mode='r') as each_splitted_file: # b is important -> binary
         JsonHeader_json = JsonHeader()
         JsonHeader_json.p = decodePart_number(each_file) #part_file
@@ -63,11 +65,24 @@ def showQRcode(each_file,origianal_filename,onlyfiles):
         #check if that file can be read
         # Disabling write and decode function, to test it
         # write_file_and_deocde.decodeimag(frame_array)
+
         while True:
             key = cv2.waitKey()
             if key == ord('q'):
                 cv2.destroyAllWindows()
                 break  # exit the loop
+            if key == ord('a'):
+                #again transmittion
+                cv2.destroyAllWindows()
+                reset_index = True
+                break  # exit the loop
+            if key == ord('s'):
+                # skip this file
+                skip_that_file = True
+                cv2.destroyAllWindows()
+
+                break  # exit the loop
+
 def trasnlit_each_file(splitted_file):
     file1 = open(splitted_file,encoding = 'utf-8', mode = 'r')
     Lines = file1.readlines()
@@ -82,18 +97,34 @@ def trasnlit_each_file(splitted_file):
 
 
 def startSendFiles(file):
-    # splitfile and send
-    # delete in splitted folder
-    if os.path.isdir(folder_to_split):
-        for eachFile in shared_utilites.load_splitted_files(folder_to_split):
-            os.remove(folder_to_split + "/" + eachFile)
+        global skip_that_file, reset_index
+        # splitfile and send
+        # delete in splitted folder
+        if os.path.isdir(folder_to_split):
+            for eachFile in shared_utilites.load_splitted_files(folder_to_split):
+                os.remove(folder_to_split + "/" + eachFile)
 
-    splitfile.split(file, folder_to_split, chunksize)
-    get_splitted_files = shared_utilites.load_splitted_files(folder_to_split)
-    for each_onlyfiles in get_splitted_files:
-        # trasnlit_each_file(folder_to_split+"/"+each_onlyfiles)
-        showQRcode(each_onlyfiles, file, get_splitted_files)
-        # input("Press Enter to continue..."+each_onlyfiles)
+        splitfile.split(file, folder_to_split, chunksize)
+        get_splitted_files = shared_utilites.load_splitted_files(folder_to_split)
+
+        # Initialize the index variable
+        i = 0
+        while True:
+            # Check if we need to reset the loop
+            if reset_index:
+                i = 0
+                reset_index = False
+            # Loop over the files in get_splitted_files
+            for each_onlyfiles in get_splitted_files[i:]:
+                # trasnlit_each_file(folder_to_split+"/"+each_onlyfiles)
+                showQRcode(each_onlyfiles, file, get_splitted_files)  # Just an example function call
+                # Check if we need to reset the loop
+                if skip_that_file:
+                    skip_that_file = False
+                    break
+            # Check if we need to break out of the loop
+            if not reset_index:
+                break
 
 
 def list_all_files(root_dir):
@@ -107,8 +138,9 @@ def list_all_files(root_dir):
 
 
 def create_sequence():
+    global skip_that_file
+    skip_that_file = False
     list_of_files = list_all_files(dir_path)
-
     for each_file in list_of_files:
         startSendFiles(each_file)
 
