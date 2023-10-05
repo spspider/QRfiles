@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 import cv2
 from mss import mss
@@ -45,6 +47,9 @@ def readQR(image):
     except Exception:
         pass
 
+for i in range(3, 0, -1):
+    print(i)
+    time.sleep(1)
 
 while True:
     sct_img = sct.grab(bounding_box)

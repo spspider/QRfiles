@@ -100,8 +100,24 @@ def delete_all_part_files(directory_files, filename):
             os.remove(os.path.join(directory_files, f))
     pass
 
+previous_file = ""
+def pressAndWait(char,filename_part):
+    global previous_file
+    if previous_file != filename_part:
+        pyautogui.keyDown(char)
+        # time.sleep()
+        pyautogui.keyUp(char)
+        previous_file = filename_part
+    else:
+        for i in range(2, 0, -1):
+            print(i)
+            time.sleep(1)
+        # pyautogui.keyDown(char)
+        # # time.sleep()
+        # pyautogui.keyUp(char)
 
 def writefile(scanned_data):
+    global previous_file
     # print(scanned_data)
     metadata_index = -1
     try:
@@ -123,13 +139,13 @@ def writefile(scanned_data):
     ####################feature recieve with folder name
     filename_part = os.path.join(recieve_folder, original_filename + ('part%04d' % number_of_file))
     filename = os.path.join(recieve_folder, original_filename)
+    print(filename_part)
     # filename = recieve_folder +"/"+original_filename+ ('part%04d' % number_of_file)
     if not os.path.exists(filename):
         shared_utilites.write_file(filename_part, string_recieved)
     else:
         # there should write some another output, like s - file exist, and we need to pass transmission
-        pyautogui.keyDown('s')
-        pyautogui.keyUp('s')
+        pressAndWait('s', filename_part)
         print("File exist, skip",filename)
         return
     ##########################
@@ -141,16 +157,14 @@ def writefile(scanned_data):
         if check_if_all_files_exists_partfiles(number_all_of_files,directory_files,filename) != True:
             # end of transmittion of one file, if number of files less then actual number, then we need repeat transmittion.
             print("ERRRRRRRROOOORRR file not recieved", original_filename)
-            pyautogui.keyDown('a')
-            pyautogui.keyUp('a')
+            pressAndWait('a', filename_part)
             return
 
     if check_if_all_files_exists_partfiles(number_all_of_files,directory_files,filename) == True:
         class_join_join.join_filename(directory_files,filename)
         # send End of transmittion:
-    pyautogui.keyDown('q')
-    # time.sleep()
-    pyautogui.keyUp('q')
+    time.sleep(1)
+    pressAndWait('q',filename_part)
 
     # Press and hold the "q" key for 2 seconds
 

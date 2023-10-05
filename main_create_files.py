@@ -95,36 +95,33 @@ def trasnlit_each_file(splitted_file):
         Array_Of_Lines.append(line_traslitted.join("\n"))
     shared_utilites.write_file(splitted_file, Array_Of_Lines)
 
-
+def startShowQRCode(get_splitted_files,file):
+    global skip_that_file, reset_index
+    for each_onlyfiles in get_splitted_files:
+        # trasnlit_each_file(folder_to_split+"/"+each_onlyfiles)
+        showQRcode(each_onlyfiles, file, get_splitted_files)  # Just an example function call
+        # Check if we need to reset the loop
+        if reset_index:
+            reset_index = False
+            startShowQRCode(get_splitted_files, file)
+            break
+        if skip_that_file:
+            skip_that_file = False
+            break
 def startSendFiles(file):
         global skip_that_file, reset_index
         # splitfile and send
         # delete in splitted folder
-        if os.path.isdir(folder_to_split):
-            for eachFile in shared_utilites.load_splitted_files(folder_to_split):
-                os.remove(folder_to_split + "/" + eachFile)
+        for file_name in folder_to_split:
+            file_path = os.path.join(folder_to_split, file_name)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+
 
         splitfile.split(file, folder_to_split, chunksize)
         get_splitted_files = shared_utilites.load_splitted_files(folder_to_split)
 
-        # Initialize the index variable
-        i = 0
-        while True:
-            # Check if we need to reset the loop
-            if reset_index:
-                i = 0
-                reset_index = False
-            # Loop over the files in get_splitted_files
-            for each_onlyfiles in get_splitted_files[i:]:
-                # trasnlit_each_file(folder_to_split+"/"+each_onlyfiles)
-                showQRcode(each_onlyfiles, file, get_splitted_files)  # Just an example function call
-                # Check if we need to reset the loop
-                if skip_that_file:
-                    skip_that_file = False
-                    break
-            # Check if we need to break out of the loop
-            if not reset_index:
-                break
+        startShowQRCode(get_splitted_files, file)
 
 
 def list_all_files(root_dir):
