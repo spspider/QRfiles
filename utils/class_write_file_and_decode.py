@@ -19,13 +19,10 @@ def customStudentDecoder(studentDict):
 def findQR_and_return_data_byQRSscanner(image):
     # convert to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
     # create QR code detector object
     detector = cv2.QRCodeDetector()
-
     # detect and decode QR codes in the image
     data, points, straight_qrcode = detector.detectAndDecode(gray)
-
     # if a QR code was detected, return the decoded data
     if data:
         return data
@@ -76,9 +73,10 @@ def list_of_parts(directory_files,filename):
     return partfiles
 def check_if_all_files_exists_partfiles(number_all_of_files, directory_files, filename):
     # create a regular expression pattern to match the desired filenames
-    pattern = re.compile(f"{filename}part\d+$")
-    # get a list of all files in the directory that match the pattern
-    partfiles = [f for f in os.listdir(directory_files) if pattern.match(f)]
+    # escape any special characters in the filename
+    escaped_filename = re.escape(filename)
+    pattern = re.compile(f"{escaped_filename}part\d+$")
+    partfiles = [f for f in os.listdir(directory_files) if pattern.search(f)]
     # sort the list of files by their numeric part
     partfiles.sort(key=lambda f: int(f[len(filename) + 4:]))
     # check if all expected files exist
@@ -118,7 +116,6 @@ def pressAndWait(char,filename_part):
 
 def writefile(scanned_data):
     global previous_file
-    # print(scanned_data)
     metadata_index = -1
     try:
         metadata_index = scanned_data.index("\n&&&&&&&&&&&&777777777777\n") + 1
@@ -134,12 +131,11 @@ def writefile(scanned_data):
     metadata_json = json.loads(metadata_recieved, object_hook=customStudentDecoder)
     number_of_file = int(metadata_json.p)
     number_all_of_files = int(metadata_json.a)
-    original_filename = str(metadata_json.f).replace("\\", "/").replace("¥¥", "/")
+    original_filename = str(metadata_json.f).replace('\\', '/').replace("¥¥", "/")
 
     ####################feature recieve with folder name
     filename_part = os.path.join(recieve_folder, original_filename + ('part%04d' % number_of_file))
     filename = os.path.join(recieve_folder, original_filename)
-    print(filename_part)
     # filename = recieve_folder +"/"+original_filename+ ('part%04d' % number_of_file)
     if not os.path.exists(filename):
         shared_utilites.write_file(filename_part, string_recieved)
@@ -150,13 +146,15 @@ def writefile(scanned_data):
         return
     ##########################
 
-    directory_files = (recieve_folder + "/" + original_filename).rsplit('/', 1)[0]
+    # directory_files = (recieve_folder + "/" + original_filename).rsplit('/', 1)[0]
+    directory_files = os.path.dirname(os.path.join(recieve_folder, original_filename))
     filename = original_filename.rsplit('/', 1)[-1]
 
     if number_all_of_files == number_of_file: # latest file in sequence
         if check_if_all_files_exists_partfiles(number_all_of_files,directory_files,filename) != True:
             # end of transmittion of one file, if number of files less then actual number, then we need repeat transmittion.
             print("ERRRRRRRROOOORRR file not recieved", original_filename)
+            exit(1)
             pressAndWait('a', filename_part)
             return
 
@@ -164,7 +162,7 @@ def writefile(scanned_data):
         class_join_join.join_filename(directory_files,filename)
         # send End of transmittion:
     time.sleep(1)
-    pressAndWait('q',filename_part)
+    # pressAndWait('q',filename_part)
 
     # Press and hold the "q" key for 2 seconds
 
