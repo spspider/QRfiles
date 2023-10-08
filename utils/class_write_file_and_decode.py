@@ -13,6 +13,7 @@ import numpy as np
 from utils.class_shared_utilites import shared_utilites
 from utils.class_join import class_join_join
 
+recieve_folder = "recieved/"
 
 def customStudentDecoder(studentDict):
     return namedtuple('X', studentDict.keys())(*studentDict.values())
@@ -48,10 +49,15 @@ def decodePart_number(filename):
         return int(match.group())
 def readQR(image):
     # qr_data = findQR_and_return_data_byQRSscanner(image)
-    qr_data = findQR_and_return_data_byPyZbar(image)
-    if qr_data is not None:
-        return qr_data
-recieve_folder = "recieved/"
+    try:
+        qr_data = findQR_and_return_data_byPyZbar(image)
+        if qr_data is not None:
+            return qr_data
+    except ValueError:
+        print("problem with reading  data at file")
+        pyautogui.keyDown('s')
+        pyautogui.keyUp('s')
+
 
 
 def check_if_all_files_exists(number_all_of_files, recieve_folder):
@@ -132,9 +138,9 @@ def writefile(scanned_data):
     number_of_file = int(metadata_json.p)
     number_all_of_files = int(metadata_json.a)
     original_filename = str(metadata_json.f).replace('\\', '/').replace("¥¥", "/")
-
     ####################feature recieve with folder name
     filename_part = os.path.join(recieve_folder, original_filename + ('part%04d' % number_of_file))
+
     filename = os.path.join(recieve_folder, original_filename)
     # filename = recieve_folder +"/"+original_filename+ ('part%04d' % number_of_file)
     if not os.path.exists(filename):
@@ -154,7 +160,6 @@ def writefile(scanned_data):
         if check_if_all_files_exists_partfiles(number_all_of_files,directory_files,filename) != True:
             # end of transmittion of one file, if number of files less then actual number, then we need repeat transmittion.
             print("ERRRRRRRROOOORRR file not recieved", original_filename)
-            exit(1)
             pressAndWait('a', filename_part)
             return
 
@@ -162,32 +167,8 @@ def writefile(scanned_data):
         class_join_join.join_filename(directory_files,filename)
         # send End of transmittion:
     time.sleep(1)
-    # pressAndWait('q',filename_part)
+    pressAndWait('q',filename_part)
 
-    # Press and hold the "q" key for 2 seconds
-
-    # delete_all_part_files(directory_files, filename)
-    # if check_if_all_files_exists(number_all_of_files, directory_files) == True:
-    #     class_join_join.join_filename(directory_files,filename)
-
-
-    # filename = recieve_folder + ('part%04d' % number_of_file)
-    # shared_utilites.write_file(filename, string_recieved)
-        # end of transportation
-    # final_file_location = "recieved_files\\" + original_filename
-    # if check_if_all_files_exists(number_all_of_files, recieve_folder, final_file_location) == True:
-    #     if os.path.isfile(final_file_location):
-    #         os.remove(final_file_location)
-    #     class_join_join.join(recieve_folder, final_file_location)
-    #     if os.path.isdir(recieve_folder):
-    #         for eachFile in shared_utilites.load_splitted_files(recieve_folder):
-    #             os.remove(recieve_folder + "/" + eachFile)
-        # move_file
-
-
-        # shared_utilites.create_folder("folder/","folder/"+original_filename)
-
-        # os.rename(filename,"folder/"+original_filename)
 class write_file_and_deocde:
     previous_number = 0
     def decodeimag(img):

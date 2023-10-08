@@ -38,13 +38,13 @@ def decodePart_number(filename):
     match = re.search(r'\d+', filename)
     if match:
         return int(match.group())
-def showQRcode(each_file,origianal_filename,onlyfiles):
+def showQRcode(each_file, original_filename, onlyfiles):
     global skip_that_file, reset_index
     with open(os.path.join(folder_to_split, each_file), encoding="utf-8", mode='r') as each_splitted_file: # b is important -> binary
         JsonHeader_json = JsonHeader()
         JsonHeader_json.p = decodePart_number(each_file) #part_file
         JsonHeader_json.a = len(onlyfiles) #allfiles
-        JsonHeader_json.f = str(origianal_filename) #.replace("\\","/") #filename
+        JsonHeader_json.f = str(original_filename) #.replace("\\","/") #filename
         fileContent = str(json.dumps(JsonHeader_json.__dict__)) + "\n&&&&&&&&&&&&777777777777\n"+ str(each_splitted_file.read())
         # print(fileContent)
         qr = qrcode.QRCode(
@@ -71,6 +71,8 @@ def showQRcode(each_file,origianal_filename,onlyfiles):
             key = cv2.waitKey()
             if key == ord('q'):
                 cv2.destroyAllWindows()
+                if JsonHeader_json.a == JsonHeader_json.p:
+                    os.remove(original_filename)
                 break  # exit the loop
             if key == ord('a'):
                 #again transmittion
@@ -138,9 +140,13 @@ def list_all_files(root_dir):
 def create_sequence():
     global skip_that_file
     skip_that_file = False
+
     list_of_files = list_all_files(dir_path)
+    # list_of_files = list_all_files(r'recieved')
     for each_file in list_of_files:
         startSendFiles(each_file)
+        print(each_file)
+
 
 
 create_sequence()
