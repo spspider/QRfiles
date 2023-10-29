@@ -1,0 +1,15 @@
+tep-eks-namespace-lambda
+tap-container
+fe-edge-lambda_tep
+eks-namespace-lambda_tep
+tep-fe-edge-lambda
+tep-authorizer-lambda
+authorizer-lambda_tep
+tep-metadata-lambda
+tep-backend
+tep-container-test
+metadata-lambda_tep
+tep-wizard-test
+proxy-lambda_tep
+tep-proxy-lambda
+tap-wizard

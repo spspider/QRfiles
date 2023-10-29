@@ -108,14 +108,13 @@ previous_file = ""
 def pressAndWait(char,filename_part):
     global previous_file
     if previous_file != filename_part:
-        pyautogui.keyDown(char)
-        # time.sleep()
-        pyautogui.keyUp(char)
+        pyautogui.press(char)
         previous_file = filename_part
+        print(filename_part)
     else:
-        for i in range(2, 0, -1):
-            print(i)
-            time.sleep(1)
+        # for i in range(2, 0, -1):
+        #     print(i)
+        time.sleep(1)
         # pyautogui.keyDown(char)
         # # time.sleep()
         # pyautogui.keyUp(char)

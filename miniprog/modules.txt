@@ -6,3 +6,5 @@ Pillow==8.4.0
 mss==9.0.1
 pyzbar==0.1.9
 opencv-python==4.5.5.64
+pyautogui
+keyboard

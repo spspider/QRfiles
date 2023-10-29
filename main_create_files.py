@@ -45,7 +45,7 @@ def showQRcode(each_file, original_filename, onlyfiles):
         JsonHeader_json.p = decodePart_number(each_file) #part_file
         JsonHeader_json.a = len(onlyfiles) #allfiles
         JsonHeader_json.f = str(original_filename) #.replace("\\","/") #filename
-        fileContent = str(json.dumps(JsonHeader_json.__dict__)) + "\n&&&&&&&&&&&&777777777777\n"+ str(each_splitted_file.read())
+        fileContent = str(json.dumps(JsonHeader_json.__dict__)) + "\n&&&&&&&&&&&&777777777777\n"+ each_splitted_file.read()
         # print(fileContent)
         qr = qrcode.QRCode(
             version=1,
