@@ -1,0 +1,9 @@
+venv/
+*.7z
+splitted/
+recieved/
+*.mp4
+ProgramToSend
+FilesToSend/
+text.txt
+*.png
