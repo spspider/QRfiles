@@ -20,7 +20,7 @@ def simulate_typing(text):
             # Wait for a brief moment before pressing the next key
         # Simulate pressing the 'enter' key using keyboard
         keyboard.press('enter')
-        keyboard.press('home')
+        # keyboard.press('home')
         # keyboard.press_and_release('home')
 
 # Get the file name from the user
