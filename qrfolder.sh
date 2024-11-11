@@ -22,9 +22,7 @@ for each_file in "$folder"/* "$folder"/*/* "$folder"/*/*/* "$folder"/*/*/*/* "$f
       json="{\"p\": \"$i\", \"a\": $(($num_chunks)), \"f\": \"$each_file\"}"
       ((i++))
       clear
-      echo -e "$json
-&&&&&&&&&&&&777777777777
-$(cat $each_splitted_file)" | qrencode -t ansiutf8 -m 2 -s 2 -d 1
+      echo -e "$json\n&&&&&&&&&&&&777777777777\n$(cat $each_splitted_file)" | qrencode -t ansiutf8 -m 2 -s 2 -d 1
       while true; do
         echo "$each_file part:$i of: $num_chunks"
         read -n1 input
