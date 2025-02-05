@@ -1,7 +1,8 @@
 venv/
 *.7z
 .idea/
-_pycache_/
+**/*_pycache_/
+**/*__pycache__
 splitted/
 recieved/
 *.mp4
