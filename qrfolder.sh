@@ -10,6 +10,19 @@ if ! command -v qrencode &>/dev/null; then
   sudo apt-get install -y qrencode
 fi
 for each_file in "$folder"/* "$folder"/*/* "$folder"/*/*/* "$folder"/*/*/*/* "$folder"/*/*/*/*/*; do
+
+  skip_file=false
+  for ignore_folder in "${ignore_folders[@]}"; do
+    if [[ "$each_file" == *"/$ignore_folder/"* ]]; then
+      skip_file=true
+      break
+    fi
+  done
+
+  if [[ "$skip_file" == true ]]; then
+    continue
+  fi
+
   if [[ -f "$each_file" ]]; then
     # split the file into 100-character chunks and store them in an array
     rm -rf "$splitted_folder"
@@ -28,7 +41,7 @@ for each_file in "$folder"/* "$folder"/*/* "$folder"/*/*/* "$folder"/*/*/*/* "$f
         read -n1 input
         if [[ $input == "s" ]]; then
           break 2
-        elif [[ -n $input ]] ; then
+        elif [[ -n $input ]]; then
           break
         fi
         # sleep 1
