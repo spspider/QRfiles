@@ -5,9 +5,10 @@ import cv2
 from mss import mss
 from utils.class_write_file_and_decode import write_file_and_deocde
 from pyzbar.pyzbar import decode as qr_decode
-from PIL import Image
-resolutionX = 1920
-resolutionY = 1080
+sct = mss()
+monitor = sct.monitors[1]
+resolutionX = monitor['width']
+resolutionY = monitor['height']
 overwrite = True
 bounding_box = {'top': 0, 'left': 0, 'width': resolutionX, 'height': resolutionY}
 def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
