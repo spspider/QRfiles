@@ -2,7 +2,7 @@ import pyautogui
 import keyboard
 import time
 import re
-import chardet
+# import chardet
 def simulate_typing(text):
     # Loop over each line in the text
     for line in text.splitlines():

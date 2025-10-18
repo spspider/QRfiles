@@ -10,7 +10,7 @@ def iterate_folders_and_print_content(target_folder):
             print(f"file: {relative_path}, content: \"\"\"{file_content}\"\"\"")
 
 # Specify the folder to run the script in
-target_folder = "recieved/mlr_serhiipaukovmicro"
+target_folder = "recieved/"
 
 # Call the function
 iterate_folders_and_print_content(target_folder)
