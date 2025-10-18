@@ -6,7 +6,7 @@ from mss import mss
 from utils.class_write_file_and_decode import write_file_and_deocde
 from pyzbar.pyzbar import decode as qr_decode
 sct = mss()
-monitor = sct.monitors[1]
+monitor = sct.monitors[0]
 resolutionX = monitor['width']
 resolutionY = monitor['height']
 overwrite = True
