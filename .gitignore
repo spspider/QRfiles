@@ -11,3 +11,4 @@ ProgramToSend
 FilesToSend/
 text.txt
 *.png
+utils/__pycache__/
